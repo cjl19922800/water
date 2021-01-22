@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.admin.mapper.RprUsewaterRepairMapper">
+
+  <select id="selectRprUsewaterList" resultType="com.shanghaiwater.mcs.admin.vo.RprUsewaterRepairMgtVO" parameterType="java.util.Map">
+	select
+		incident.incident_id			incident_id
+		,incident.apply_no				apply_no
+		,incident.applicant				applicant
+		,incident.appdate				appdate
+		,incident.status				status
+		,incident.incident_type			incident_type
+		,incident.cert_type				cert_type
+		,incident.cert_number			cert_number
+		,incident.email					email
+		,(select item_value from sys_multi_code_detail where item_code = incident.xzq and parent_item_code = incident.company_name)					xzq
+		,incident.company_name			company_name
+		,incident.company_type			company_type
+		,incident.social_credit_code	social_credit_code
+		,incident.description			description
+		,repair.fa_id					fa_id
+		,repair.cm_sta					cm_sta
+		,repair.update_dttm				update_dttm
+		,(select name from mgt_water_company where company_code = repair.cis_company)			cis_company
+		,repair.case_type_cd			case_type_cd
+		,repair.card_id					card_id
+		,repair.acct_id					acct_id
+		,repair.per_name				per_name
+		,repair.address					address
+		,repair.contact_value			contact_value
+		,repair.fyly					fyly
+		,repair.fyxs					fyxs
+		,repair.fyqm					fyqm
+		,repair.fylb					fylb
+		,repair.fynr					fynr
+		,repair.bx_dttm					bx_dttm
+		,repair.cljb					cljb
+		,repair.cn_dttm					cn_dttm
+		,(select item_value from sys_dict_item where dict_code='RepairPosition' and item_code=repair.bx_loc_cd)					bx_loc_cd
+		,repair.comment					comment
+
+	from	rpr_usewater_repair			repair
+	inner join mcs_incident				incident	
+	on		repair.incident_id		= incident.incident_id
+	where	1 = 1
+			and	incident.incident_type	= #{itemType,jdbcType=VARCHAR}
+		and	incident.status			!=	'IncidentStatus.Draft'
+	<if test="isNormalAdmin">
+		and repair.cis_company	=	#{companyCode,jdbcType=VARCHAR}
+	</if>
+	<if test="status != null and status != ''">
+		and incident.status = #{status,jdbcType=VARCHAR}
+	</if>
+	<if test="startdate != null and startdate != ''">
+		and incident.appdate &gt;= #{startdate,jdbcType=VARCHAR}
+	</if>
+	<if test="enddate != null and enddate != ''">
+		and incident.appdate &lt; #{enddate,jdbcType=VARCHAR}
+	</if> 
+	<if test="limit != null and limit != ''">
+		limit #{page,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+	</if>
+	
+  </select>
+  
+   <select id="selectRprUsewaterCount" resultType="Integer" parameterType="java.util.Map">
+	select
+		count(*)
+	from	rpr_usewater_repair			repair
+	inner join mcs_incident				incident	
+	on		repair.incident_id		= incident.incident_id
+	where	1 = 1
+			and	incident.incident_type	= #{itemType,jdbcType=VARCHAR}
+
+		and	incident.status			!=	'IncidentStatus.Draft'
+	<if test="isNormalAdmin">
+		and repair.cis_company	=	#{companyCode,jdbcType=VARCHAR}
+	</if>
+	<if test="status != null and status != ''">
+		and incident.status = #{status,jdbcType=VARCHAR}
+	</if>
+	<if test="startdate != null and startdate != ''">
+		and incident.appdate &gt;= #{startdate,jdbcType=VARCHAR}
+	</if>
+	<if test="enddate != null and enddate != ''">
+		and incident.appdate &lt; #{enddate,jdbcType=VARCHAR}
+	</if> 
+	
+  </select>
+</mapper>

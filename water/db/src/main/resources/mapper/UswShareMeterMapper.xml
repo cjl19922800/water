@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.db.mapper.UswShareMeterMapper">
+
+     <select id="queryShareMeterList" resultType="com.shanghaiwater.mcs.db.vo.ShareMeterIncidentMgtVO" parameterType="java.util.Map">
+     	SELECT 
+     		* 
+     	FROM 
+     		(
+     		(
+     	SELECT ROWNUM 
+     		rn,
+     		t.*
+     	FROM
+     		(
+     			SELECT
+     				incident.DEAL,
+     				incident.INCIDENT_ID,
+     				incident.APPDATE,
+     				incident.USER_NO,
+     				incident.SOURCE,
+     				to_char(incident.APPDATE,'yyyy-mm-dd hh24:mi:ss') AS APPDATE_STRING,
+					to_char(incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ),'yyyy-mm-dd') AS expireString,
+					incident.APPLY_NO,
+					incident.STATUS,
+					( SELECT ITEM_VALUE FROM SYS_DICT_ITEM WHERE incident.STATUS = ITEM_CODE AND DICT_CODE = 'IncidentStatus' ) AS STATUS_DICT,
+					incident.SHW_COMPANY,
+					( SELECT NAME FROM MGT_WATER_COMPANY WHERE COMPANY_CODE = incident.SHW_COMPANY ) AS COMPANY_NAME,
+					incident.SHW_ADDRESS,
+					incident.INCIDENT_TYPE,
+					incident.CERT_TYPE,
+					( SELECT ITEM_VALUE FROM SYS_DICT_ITEM WHERE incident.CERT_TYPE = ITEM_CODE AND DICT_CODE = 'CertificateType' ) AS CERT_TYPE_DICT,
+					incident.APPLICANT,
+					incident.CERT_NUMBER,
+					incident.YWXT_SUCCESS,
+					incident.YWTB_SUCCESS,
+					incident.IF_RESULT,
+					to_char(incident.UDATE,'yyyy-mm-dd hh24:mi:ss') AS UPDATE_TIME,
+					incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) AS EXPIRE_DATE,
+						(CASE			
+							WHEN incident.STATUS = 'IncidentStatus.Finish' OR incident.STATUS = 'IncidentStatus.Return' OR incident.STATUS = 'IncidentStatus.Defer' 
+						THEN 0 
+						ELSE (
+							CASE						
+								WHEN incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &gt; 2 
+							THEN 0 
+								WHEN incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &gt; 0 AND incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &lt;= 2 
+							THEN 1 
+							ELSE 2 
+							END ) 
+						END 
+						) AS EXPIRE_STATUS,
+					info.HOUSE_CERT_TYPE,
+					(SELECT ITEM_VALUE FROM SYS_DICT_ITEM WHERE info.HOUSE_CERT_TYPE = ITEM_CODE AND DICT_CODE = 'HouseCertType') AS HOURSE_CERT_DICT,
+					info.HOUSE_CERT_NO,
+					info.CONTACT_NUM,
+					info.EMAIL,
+					info.BOOKLET_NUM,
+					info.APP_TYPE,
+					info.REQ_TYPE
+				FROM
+					MCS_INCIDENT incident,
+					USW_SHARE_METER info,
+					MCS_ITEM_CODE b
+				WHERE incident.INCIDENT_ID = info.INCIDENT_ID
+				AND incident.INCIDENT_TYPE = b.INCIDENT_TYPE
+				AND incident.INCIDENT_TYPE = #{incidentType,jdbcType=VARCHAR}
+				
+				<!-- <if test="incidentType == 'McsItemType.RepairUnseal'.toString()">
+			AND incident.YWXT_SUCCESS = 1
+		</if> -->
+				
+				
+				<if test="status != null and status != ''">
+					AND incident.STATUS = #{status,jdbcType=VARCHAR}
+				</if>
+				
+					AND incident.SHW_COMPANY IN
+				<foreach item="item" index="index" collection="companys" open="(" separator="," close=")">  
+	       			#{item}  
+	  			</foreach>
+     			<if test="eStatus != null and eStatus != ''">
+					<if test="eStatus == '0'.toString()">
+						AND ((incident.STATUS = 'IncidentStatus.Finish' OR incident.STATUS = 'IncidentStatus.Return' OR incident.STATUS = 'IncidentStatus.Defer') OR  incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &gt; 2)
+				</if>
+				<if test="eStatus == '1'.toString()">
+					AND incident.STATUS != 'IncidentStatus.Finish'
+					AND incident.STATUS != 'IncidentStatus.Return'
+					AND incident.STATUS != 'IncidentStatus.Defer'
+					AND incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &gt; 0
+					AND incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &lt;= 2 
+				</if>
+				<if test="eStatus == '2'.toString()">
+					AND incident.STATUS != 'IncidentStatus.Finish'
+					AND incident.STATUS != 'IncidentStatus.Return'
+					AND incident.STATUS != 'IncidentStatus.Defer'
+					AND incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &lt;= 0
+				</if>
+			</if>
+	  	
+			<if test="companyCode != null and companyCode != ''">
+				AND incident.SHW_COMPANY = #{companyCode,jdbcType=VARCHAR}
+			</if>
+		
+			<if test="userNo != null and userNo != ''">
+				AND incident.USER_NO = #{userNo,jdbcType=VARCHAR}
+			</if>
+		
+			<if test="endTime != null and endTime != ''">
+				AND incident.APPDATE &lt;= TO_DATE(#{endTime,jdbcType=VARCHAR},'yyyy-MM-dd hh24:mi:ss')
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND incident.APPDATE &gt;= TO_DATE(#{startTime,jdbcType=VARCHAR},'yyyy-MM-dd hh24:mi:ss')
+			</if>
+			<if test="name != null and name != ''">
+				AND	incident.APPLICANT LIKE #{name}
+			</if>
+			<if test="phone != null and phone != ''">
+				AND	info.CONTACT_NUM LIKE #{phone}
+			</if>
+			<if test="deal != null and deal != ''">
+				AND incident.DEAL = #{deal,jdbcType=VARCHAR}
+			</if>
+	  		ORDER BY incident.APPDATE DESC ) t
+  		WHERE
+			ROWNUM &lt;= #{page,jdbcType=VARCHAR} * #{limit,jdbcType=VARCHAR} 
+			)) rowpage 
+		WHERE
+			rn &gt; #{page,jdbcType=VARCHAR} * #{limit,jdbcType=VARCHAR} - #{limit,jdbcType=VARCHAR}
+ 	 </select>
+ 	 
+ 	 
+ 	 
+ 	 <select id="queryShareMeterCount" resultType="Integer" parameterType="java.util.Map">
+	SELECT
+		COUNT(1)
+	FROM
+		MCS_INCIDENT incident,
+		USW_SHARE_METER info,MCS_ITEM_CODE b 
+	WHERE
+		info.INCIDENT_ID = incident.INCIDENT_ID
+	AND incident.INCIDENT_TYPE = b.INCIDENT_TYPE
+	AND incident.INCIDENT_TYPE = #{incidentType,jdbcType=VARCHAR}
+	
+	<!-- <if test="incidentType == 'McsItemType.RepairUnseal'.toString()">
+			AND incident.YWXT_SUCCESS = 1
+		</if> -->
+	
+   	AND incident.SHW_COMPANY IN
+	<foreach item="item" index="index" collection="companys" open="(" separator="," close=")">  
+       	#{item}  
+  	</foreach>
+  	<if test="status != null and status != ''">
+		AND incident.STATUS = #{status,jdbcType=VARCHAR}
+	</if>
+	
+	<if test="eStatus != null and eStatus != ''">
+			<if test="eStatus == '0'.toString()">
+				AND ((incident.STATUS = 'IncidentStatus.Finish' OR incident.STATUS = 'IncidentStatus.Return' OR incident.STATUS = 'IncidentStatus.Defer') OR  incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &gt; 2)
+			</if>
+			<if test="eStatus == '1'.toString()">
+				AND incident.STATUS != 'IncidentStatus.Finish'
+				AND incident.STATUS != 'IncidentStatus.Return'
+				AND incident.STATUS != 'IncidentStatus.Defer'
+				AND incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &gt; 0
+				AND incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &lt;= 2 
+			</if>
+			<if test="eStatus == '2'.toString()">
+				AND incident.STATUS != 'IncidentStatus.Finish'
+				AND incident.STATUS != 'IncidentStatus.Return'
+				AND incident.STATUS != 'IncidentStatus.Defer'
+				AND incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &lt;= 0
+			</if>
+		</if>
+	
+	<if test="companyCode != null and companyCode != ''">
+		AND incident.SHW_COMPANY = #{companyCode,jdbcType=VARCHAR}
+	</if>
+	
+	<if test="userNo != null and userNo != ''">
+		AND incident.USER_NO = #{userNo,jdbcType=VARCHAR}
+	</if>
+	
+	<if test="endTime != null and endTime != ''">
+		AND incident.APPDATE &lt;= TO_DATE(#{endTime,jdbcType=VARCHAR},'yyyy-MM-dd hh24:mi:ss')
+	</if>
+	<if test="startTime != null and startTime != ''">
+		AND incident.APPDATE &gt;= TO_DATE(#{startTime,jdbcType=VARCHAR},'yyyy-MM-dd hh24:mi:ss')
+	</if>
+	<if test="name != null and name != ''">
+		AND	incident.APPLICANT LIKE #{name}
+	</if>
+	<if test="phone != null and phone != ''">
+		AND	info.CONTACT_NUM LIKE #{phone}
+	</if>
+	<if test="deal != null and deal != ''">
+		AND incident.DEAL = #{deal,jdbcType=VARCHAR}
+	</if>
+  </select>
+  
+  
+  <select id="queryAllRealNameList" resultType="com.shanghaiwater.mcs.db.vo.RealNameIncidentMgtVO" parameterType="java.util.Map">
+  	SELECT
+  		incident.DEAL,
+		incident.INCIDENT_ID,
+		incident.APPDATE,
+		incident.USER_NO,
+		incident.SOURCE,
+		incident.COMPANY_NAME AS APPLY_COMPANY_NAME,
+		incident.APPLY_NO,
+		incident.STATUS,
+		( SELECT ITEM_VALUE FROM SYS_DICT_ITEM WHERE incident.STATUS = ITEM_CODE AND DICT_CODE = 'IncidentStatus' ) AS STATUS_DICT,
+		incident.SHW_COMPANY,
+		( SELECT NAME FROM MGT_WATER_COMPANY WHERE COMPANY_CODE = incident.SHW_COMPANY ) AS COMPANY_NAME,
+		incident.SHW_ADDRESS,
+		incident.INCIDENT_TYPE,
+		incident.CERT_TYPE,
+		incident.IF_RESULT,
+		to_char(incident.UDATE,'yyyy-mm-dd hh24:mi:ss') AS UPDATE_TIME,
+		incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) AS EXPIRE_DATE,
+			(CASE			
+				WHEN incident.STATUS = 'IncidentStatus.Finish' OR incident.STATUS = 'IncidentStatus.Return' OR incident.STATUS = 'IncidentStatus.Defer' 
+			THEN 0 
+			ELSE (
+				CASE						
+					WHEN incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &gt; 2 
+				THEN 0 
+					WHEN incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &gt; 0 AND incident.APPDATE + numtodsinterval( b.PROCCESS_TIME, 'hour' ) - SYSDATE &lt;= 2 
+				THEN 1 
+				ELSE 2 
+				END ) 
+			END 
+			) AS EXPIRE_STATUS,
+		( SELECT ITEM_VALUE FROM SYS_DICT_ITEM WHERE incident.CERT_TYPE = ITEM_CODE AND DICT_CODE = 'CertificateType' ) AS CERT_TYPE_DICT,
+		incident.APPLICANT,
+		incident.CERT_NUMBER,
+		incident.YWXT_SUCCESS,
+		incident.YWTB_SUCCESS,
+		info.CONTACT_VALUE,
+		info.ADDRESSEE,
+		info.ADD_PHONE,
+		info.MAIL_ADDRESS,
+		info.POST_CODE,
+		info.BILL_DATE
+	FROM
+		MCS_INCIDENT incident,
+		USW_PAY_REMAIL_APPLY info,
+		MCS_ITEM_CODE b  
+	WHERE
+		incident.INCIDENT_ID = info.INCIDENT_ID
+	AND incident.INCIDENT_TYPE = #{incidentType,jdbcType=VARCHAR}
+	AND incident.INCIDENT_TYPE = b.INCIDENT_TYPE
+	<if test="incidentType == 'McsItemType.PayNoticeRemail'.toString()">
+		AND incident.YWXT_SUCCESS = 1
+	</if>
+	
+	<if test="incidentType == 'McsItemType.PayNoticeCompanyRemail'.toString()">
+		AND incident.YWXT_SUCCESS = 1
+	</if>
+  	<if test="status != null and status != ''">
+		AND incident.STATUS = #{status,jdbcType=VARCHAR}
+	</if>
+      	AND incident.SHW_COMPANY IN
+	<foreach item="item" index="index" collection="companys" open="(" separator="," close=")">  
+       	#{item}  
+  	</foreach>
+	<if test="companyCode != null and companyCode != ''">
+		AND incident.SHW_COMPANY = #{companyCode,jdbcType=VARCHAR}
+	</if>
+	<if test="enddate != null and enddate != ''">
+		AND incident.APPDATE &lt;= TO_DATE(#{enddate,jdbcType=VARCHAR},'yyyy-MM-dd hh24:mi:ss')
+	</if>
+	<if test="startdate != null and startdate != ''">
+		AND incident.APPDATE &gt;= TO_DATE(#{startdate,jdbcType=VARCHAR},'yyyy-MM-dd hh24:mi:ss')
+	</if>
+	<if test="name != null and name != ''">
+		AND	incident.APPLICANT LIKE #{name}
+	</if>
+	<if test="phone != null and phone != ''">
+		AND	info.PRO_OWNER_PHONE LIKE #{phone}
+	</if>
+	<if test="deal != null and deal != ''">
+		AND incident.DEAL = #{deal,jdbcType=VARCHAR}
+	</if>
+  	ORDER BY incident.APPDATE DESC
+ 
+  </select>
+
+
+
+</mapper>

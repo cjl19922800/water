@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.db.mapper.SysDictTypeMapper">
+  <select id="queryAllDictType" resultType="com.shanghaiwater.mcs.common.vo.DictType" parameterType="java.util.Map">
+	select
+		dt.dict_type_id
+		,dt.dict_code
+		,dt.dict_name
+		,dt.description
+	from	sys_dict_type dt
+	where	1 = 1
+
+  </select>
+ 
+</mapper>

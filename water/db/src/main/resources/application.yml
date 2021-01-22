@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@//49.235.81.184:1521/ctorcl
+    username: mcspay
+    password: Mcspay2019
+#    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://193.112.216.54:30001/mcs_management?serverTimezone=UTC
+#    username: mcs
+#    password: McsUseWater20!90701
+#    url: jdbc:oracle:thin:@10.10.20.15:1521:ctorcl
+#    username: mcspay
+#    password: Mcspay2019
+#    driver-class-name: oracle.jdbc.driver.OracleDriver
+#
+#    url: jdbc:oracle:thin:@122.51.41.3:1521:mcs
+#    username: mcsuw
+#    password: mcsuw2019
+#    driver-class-name: oracle.jdbc.driver.OracleDriver

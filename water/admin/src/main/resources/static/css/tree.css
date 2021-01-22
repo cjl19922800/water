@@ -1,0 +1,53 @@
+ul>li{
+         list-style: none;
+     }
+       /* 可展开*/
+      .switch-open
+      {
+          margin-left:-12px;
+          border:6px solid transparent;
+          display:inline-block;
+          width:0px;
+          height:0px;
+          border-top-color: black;
+ 
+      }
+       /* 展开完毕*/
+     .switch-close
+     {
+         margin-left:-12px;
+         border:6px solid transparent;
+         display:inline-block;
+         width:0px;
+         height:0px;
+         border-left-color: black;
+         margin-bottom: 2px;
+ 
+     }
+       /* 改变CheckBox样式*/
+     input[type='checkbox']{
+         width: 20px;
+         height: 20px;
+ 
+         -webkit-appearance:none;
+         -moz-appearance: none;
+         border: 1px solid #c9c9c9;
+         border-radius: 3px;
+         outline: none;
+         color:white;
+         text-align: center;
+     }
+     input[type='checkbox']:before
+     {
+         content: '√ ';
+         color:transparent;
+     }
+     input[type=checkbox]:checked{
+         background-color: #30add6;
+     }
+     input[type=checkbox]:checked:before{
+         content: '√';
+         color:white;
+         font-weight: bold;
+     }
+

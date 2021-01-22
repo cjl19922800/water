@@ -1,0 +1,76 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layer iframe 示例</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+  <style>
+    body{padding:10px; font-size:14px; background:#fff; width:95%; margin:0 auto; font-size:14px; line-height:20px; overflow:hidden;}
+    p{margin-bottom:10px;}
+    input{border:1px solid #999; padding:5px 10px; margin:0 10px 10px 0;}
+  </style>
+</head>
+<body>
+
+
+ &nbsp;   状态：<select name="LAY_mark"  id="LAY_mark" class="layui-input">
+                <option value="处理中">处理中</option>
+                <option value="退单">退单</option>
+                <option value="办结">完结</option>
+                </select>
+                <br><br/>
+<div class="layui-btn-container">
+  <button class="layui-btn layui-btn-primary" data-type="setParent">确认修改</button>
+  <button class="layui-btn layui-btn-primary" data-type="close">关闭</button>
+</div>
+
+<script src="../../../layuiadmin/layui/layui.js"></script>  
+<script>
+layui.use('layer', function(){
+  var $ = layui.$
+  ,layer = layui.layer
+  ,index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+  
+  var active = {
+		  
+    //给父页面传值
+    setParent: function(){
+      var id = '#aa'
+      ,mark = $('#LAY_mark')
+      ,val = mark.val();
+      
+      if(val === ''){
+        mark.focus();
+        parent.layer.msg('请填写标记');
+        return true;
+      }
+      
+      parent.layer.msg('您将原来状态修改为[ '+val);
+      parent.layui.$(id).val(val);
+      parent.layer.tips('Look here', id, {
+        time: 5000
+      });
+      parent.layer.close(index);
+    }
+    
+    
+    //在内部关闭iframe
+    ,close: function(set){
+      parent.layer.close(index);
+    }
+  }
+  
+  $('.layui-btn-container .layui-btn').on('click', function(){
+    var othis = $(this)
+    ,type = othis.data('type');
+    active[type] && active[type].call(this);
+  });
+});
+</script>
+</body>
+</html>

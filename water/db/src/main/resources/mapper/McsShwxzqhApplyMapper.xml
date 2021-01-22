@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.db.mapper.McsShwxzqhApplyMapper">
+  <select id="queryShwxzqhApply" resultType="com.shanghaiwater.mcs.common.vo.AreaTown" parameterType="java.util.Map">
+	select
+		shwxzqh.shwxzqh_apply_id
+		,shwxzqh.qxmc_apply
+		,shwxzqh.qxdm_apply
+		,shwxzqh.jdzmc_apply
+		,shwxzqh.jdzdm_apply
+		,shwxzqh.company_name
+		,shwxzqh.company_code
+		,shwxzqh.qxmc
+		,shwxzqh.qxdm
+		,shwxzqh.jdzmc
+		,shwxzqh.jdzdm
+		,shwxzqh.description
+	from	mcs_shwxzqh_apply shwxzqh
+	where	1 = 1
+		and	shwxzqh.available_flag		=	'Enable'
+	<if test="qxdmApply != null and qxdmApply != ''">
+		and shwxzqh.qxdm_apply	=	#{qxdmApply, jdbcType=VARCHAR}
+	</if>
+	<if test="jdzdmApply != null and jdzdmApply != ''">
+		and shwxzqh.jdzdm_apply	=	#{jdzdmApply, jdbcType=VARCHAR}
+	</if>
+		
+	order by	sort_no
+
+  </select>
+  
+  	<select id="selectAllArea" resultType="com.shanghaiwater.mcs.common.vo.AreaTown">
+		select distinct qxdm_apply,qxmc_apply from mcs_shwxzqh_apply
+	</select>
+	
+ 
+</mapper>

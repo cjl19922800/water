@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>补送缴费通知（单位）</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">申请单类型</label>
+            <div class="layui-input-block">
+              <input type="text" readonly="true" name="incidentTypeName" value="补送缴费通知" autocomplete="off" class="layui-input">
+             <!--  <input type="hidden" id = "incidentType" name="incidentType" value="McsItemType.PayNoticeCompanyRemail" >
+        -->     </div>
+          </div>
+
+		<div class="layui-inline">
+            <label class="layui-form-label">水司</label>
+            <div class="layui-input-block">
+            	<sys:dict type="McsWaterCompany" id="companyCode" name="companyCode" class="" />
+            </div>
+          </div>
+
+
+			<div class="layui-inline">
+        		<label class="layui-form-label">户号</label>
+        		<div class="layui-input-block">
+        			<input type="text" name="userNo" id="userNo" placeholder="请输入" autocomplete="off" class="layui-input">
+        		</div>
+        	</div>
+
+		<div class="layui-inline">
+				<label class="layui-form-label">到期状态</label>
+				<div class="layui-input-block">
+					<select name="eStatus" id="eStatus">
+						<option value="">全部</option>
+						<option value="0">正常状态</option>
+						<option value="1">即将到期</option>
+						<option value="2">已到期</option>
+					</select>
+				</div>
+			</div>	
+
+
+
+          <div class="layui-inline">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+              <select name="status" id="status">
+                <option value="">全部</option>
+                <option value="IncidentStatus.New">新申请</option>
+                <option value="IncidentStatus.Processing">处理中</option>
+                <option value="IncidentStatus.Finish">办结</option>
+                <option th:if="${session.adminLoginInfo != null} and (${session.adminLoginInfo.isRootAdmin} or ${session.adminLoginInfo.isSHWAdmin})" value="IncidentStatus.Return">退单</option>
+              </select>
+            </div>
+          </div>
+          
+          
+          <div class="layui-inline">
+				<label class="layui-form-label">是否处理</label>
+				<div class="layui-input-block">
+					<select name="deal" id="deal">
+						<option value="">全部</option>
+						<option value="1">已处理</option>
+						<option value="0">未处理</option>
+					</select>
+				</div>
+			</div>		
+          
+		  
+          <div class="layui-inline">
+            <label class="layui-form-label">起始日期</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="startdate"  id="LAY-usewater-recident_transfer-index-startdate" placeholder="YYYY-MM-DD" autocomplete="off" class="layui-input">
+		    </div>
+          </div>
+
+
+          <div class="layui-inline">
+            <label class="layui-form-label">终止日期</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="enddate"  id="LAY-usewater-recident_transfer-index-enddate" placeholder="YYYY-MM-DD" autocomplete="off" class="layui-input">
+		    </div>
+          </div>
+ 
+ 			<div class="layui-inline">
+        		<label class="layui-form-label">申请人</label>
+        		<div class="layui-input-block">
+        			<input type="text" name="name" id="name" placeholder="请输入" autocomplete="off" class="layui-input">
+        		</div>
+        	</div>
+        	
+        	<div class="layui-inline">
+        		<label class="layui-form-label">电话</label>
+        		<div class="layui-input-block">
+        			<input type="text" name="phone" id="phone" placeholder="请输入" autocomplete="off" class="layui-input">
+        		</div>
+        	</div>
+ 
+ 
+ 
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-order" lay-submit lay-filter="LAY-app-order-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+        
+        <div style="padding-bottom: 10px;">
+          <button class="layui-btn layuiadmin-btn-role" onclick="exportExcel()">导出</button>
+        </div>
+        
+            <table id="LAY-app-system-order" lay-filter="LAY-app-system-order"></table>
+            <script type="text/html" id="progressTpl">
+                <div class="layui-progress layuiadmin-order-progress" lay-filter="progress-"+ {{ d.orderid }} +"">
+                <div class="layui-progress-bar layui-bg-blue" lay-percent= {{ d.progress }}></div>
+                </div>
+            </script>
+        <script type="text/html" id="buttonTpl">
+          {{#  if(d.status == 'IncidentStatus.New'){ }}
+            <button class="layui-btn layui-btn-normal layui-btn-xs">新申请</button>
+          {{#  } else if(d.status == 'IncidentStatus.Finish'){ }}
+            <button class="layui-btn layui-btn-primary layui-btn-xs">办结</button>
+		  {{#  } else if(d.status == 'IncidentStatus.Defer'){ }}
+            <button class="layui-btn layui-btn-disabled layui-btn-xs">延期</button>
+          {{#  } else if(d.status == 'IncidentStatus.Return'){ }}
+            <button class="layui-btn layui-btn-danger layui-btn-xs">退单</button>
+          {{#  } else{ }}
+            <button class="layui-btn layui-btn-warm layui-btn-xs">处理中</button>
+          {{#  } }}
+        </script>
+		<script type="text/html" id="test-table-checkboxTpl">
+            <input type="checkbox" name="deal" title="处理" lay-filter="test-table-lockDemo" 
+            value="{{d.deal == true}}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" {{ d.deal == true ? 'checked' : '' }}>
+        </script>
+            <script type="text/html" id="table-system-order">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">
+                    <i class="layui-icon layui-icon-edit"></i>详细
+                </a>
+				 {{#  if(d.status == 'IncidentStatus.Finish' && d.ifResult == '01'){ }}
+					<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="down">合同下载</a>
+          		{{#  } }}
+            </script>
+        </div>
+    </div>
+</div>
+
+<script src="../../../layuiadmin/layui/layui.js"></script>
+ <script src="../../../js/jquery-1.11.0.min.js"></script>  
+<script>
+    layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'payRemailCompany', 'table', 'laydate'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,laydate = layui.laydate
+            ,table = layui.table;
+
+        laydate.render({
+            elem: '#LAY-usewater-recident_transfer-index-startdate'
+        });
+
+        laydate.render({
+            elem: '#LAY-usewater-recident_transfer-index-enddate'
+        });
+
+        
+        form.on('checkbox(test-table-lockDemo)', function(obj){
+        	var json = JSON.parse(decodeURIComponent($(this).data('json')));
+          	json = table.clearCacheKey(json);
+          	var param = {
+    			incidentId: json.incidentId,
+    			dealStatus: obj.elem.checked
+    		};
+          	var payload = JSON.stringify(param);
+            $.ajax({
+      			type:"post",
+      			contentType: 'application/json;charset=utf-8',
+      			dataType:"json",
+      			url:"/incident/handle/deal",
+      			data:payload,
+                  cache: false,
+                  async: true,
+      			success:function(res){
+      				console.log(res);
+      				if(res.success){
+      					layer.tips("修改成功");
+      		        	table.reload('LAY-app-system-order'); //数据刷新
+      				}else{
+      					layer.tips("修改失败");
+      				}
+      			}
+      		});
+          	
+        });
+        
+        //监听搜索
+        form.on('submit(LAY-app-order-search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('LAY-app-system-order', {
+                where: field
+            });
+        });
+    });
+    function exportExcel(){
+   	 var companyCode = $("#companyCode").val();
+   	  var userNo = $("#userNo").val();
+   	  var status = $("#status").val();
+   	  var deal = $("#deal").val();
+   	  var name = $("#name").val();
+   	  var phone = $("#phone").val();
+   	  var enddate = $("#LAY-usewater-recident_transfer-index-enddate").val();
+   	  var startdate = $("#LAY-usewater-recident_transfer-index-startdate").val();
+  	  window.location.href="/incident/handle/export?incidentType=UniTransfer"+"&companyCode="+companyCode+"&userNo="+userNo+"&status="+status+"&deal="+deal+"&phone="+phone+"&enddate="+enddate+"&startdate="+startdate;
+    }
+</script>
+</body>
+</html>

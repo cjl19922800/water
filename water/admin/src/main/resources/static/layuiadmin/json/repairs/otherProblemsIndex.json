@@ -1,0 +1,54 @@
+{
+  "code": 0
+  ,"msg": ""
+  ,"count": "6"
+  ,"data": [{
+    "repairsLocation": "屋内"
+    ,"repairsContent": "堵了"
+    ,"description": "堵"
+    ,"incident_type": "报修"
+    ,"applicant": "张三"
+    ,"accept_company": "浦东威立雅"
+    ,"status": "处理中"
+  },{
+    "repairsLocation": "屋内"
+    ,"repairsContent": "楼上漏水"
+    ,"description": "堵"
+    ,"incident_type": "报修"
+    ,"applicant": "田先生"
+    ,"accept_company": "供水分公司"
+    ,"status": "处理中"
+  },{
+    "repairsLocation": "屋内"
+    ,"repairsContent": "堵了"
+    ,"description": "堵"
+    ,"incident_type": "报修"
+    ,"applicant": "李四"
+    ,"accept_company": "供水分公司"
+    ,"status": "处理中"
+  },{
+   "repairsLocation": "屋内"
+    ,"repairsContent": "堵了"
+    ,"description": "堵"
+    ,"incident_type": "报修"
+    ,"applicant": "田先生"
+    ,"accept_company": "供水分公司"
+    ,"status": "办结"
+  },{
+   "repairsLocation": "屋内"
+    ,"repairsContent": "堵了"
+    ,"description": "堵"
+    ,"incident_type": "报修"
+    ,"applicant": "李四"
+    ,"accept_company": "供水分公司"
+    ,"status": "待分配"
+  },{
+    "repairsLocation": "屋内"
+    ,"repairsContent": "堵了"
+    ,"description": "堵"
+    ,"incident_type": "报修"
+    ,"applicant": "李四"
+    ,"accept_company": "供水分公司"
+    ,"status": "处理中"
+  }]
+}

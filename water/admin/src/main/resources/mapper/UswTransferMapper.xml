@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.admin.mapper.UswTransferMapper">
+  <select id="selectResidentTransferList" resultType="com.shanghaiwater.mcs.admin.vo.ResidentTransferMgtVO" parameterType="java.util.Map">
+	select
+		incident.incident_id			incident_id
+		,incident.apply_no				apply_no
+		,incident.applicant				applicant
+		,incident.appdate				appdate
+		,incident.status				status
+		,incident.incident_type			incident_type
+		,incident.cert_type				cert_type
+		,incident.cert_number			cert_number
+		,incident.email					email
+		,(select item_value from sys_multi_code_detail where item_code = incident.xzq and parent_item_code = incident.company_name)					xzq
+		,incident.company_name			company_name
+		,incident.company_type			company_type
+		,incident.social_credit_code	social_credit_code
+		,incident.description			description
+		,transfer.fa_id				fa_id
+		,transfer.cm_sta				cm_sta
+		,transfer.update_dttm				update_dttm
+		,transfer.cis_company				cis_company
+		,transfer.business_type				business_type
+		,transfer.card_id				card_id
+		,transfer.acct_id				acct_id
+		,transfer.fy_dttm				fy_dttm
+		,transfer.gh_meter_read				gh_meter_read
+		,transfer.amt				amt
+		,transfer.new_entity_name				new_entity_name
+		,transfer.id_type				id_type
+		,transfer.id_nbr				id_nbr
+		,transfer.fczjlx				fczjlx
+		,transfer.fczjhm				fczjhm
+		,transfer.address				address
+		,transfer.comm_rte_type_cd				comm_rte_type_cd
+		,transfer.contact_value				contact_value
+		,transfer.gyshtbh				gyshtbh
+		,transfer.fplx				fplx
+		,transfer.fptt				fptt
+		,transfer.nsrsbh				nsrsbh
+		,transfer.qylx				qylx
+		,transfer.ysrks				ysrks
+		,transfer.comment				comment
+
+	from	usw_transfer			transfer
+	inner join mcs_incident				incident	on		transfer.incident_id		= incident.incident_id
+	where	1 = 1
+		and	incident.status			!=	'IncidentStatus.Draft'
+	<if test="isNormalAdmin">
+		and transfer.cis_company	=	#{companyCode,jdbcType=VARCHAR}
+	</if>
+	
+	<if test="status != null and status != ''">
+		and incident.status = #{status,jdbcType=VARCHAR}
+	</if>
+	<if test="startdate != null and startdate != ''">
+		and incident.appdate &gt;= #{startdate,jdbcType=VARCHAR}
+	</if>
+	<if test="enddate != null and enddate != ''">
+		and incident.appdate &lt; #{enddate,jdbcType=VARCHAR}
+	</if> 
+	<if test="limit != null and limit != ''">
+		limit #{page,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+	</if>
+	
+  </select>
+  
+   <select id="selectResidentTransferCount" resultType="Integer" parameterType="java.util.Map">
+	select
+		count(*)
+	from	usw_transfer			transfer
+	inner join mcs_incident				incident	on		transfer.incident_id		= incident.incident_id
+	where	1 = 1
+		and	incident.status			!=	'IncidentStatus.Draft'
+	<if test="isNormalAdmin">
+		and transfer.cis_company	=	#{companyCode,jdbcType=VARCHAR}
+	</if>
+	<if test="status != null and status != ''">
+		and incident.status = #{status,jdbcType=VARCHAR}
+	</if>
+	<if test="startdate != null and startdate != ''">
+		and incident.appdate &gt;= #{startdate,jdbcType=VARCHAR}
+	</if>
+	<if test="enddate != null and enddate != ''">
+		and incident.appdate &lt; #{enddate,jdbcType=VARCHAR}
+	</if> 
+
+  </select>
+</mapper>

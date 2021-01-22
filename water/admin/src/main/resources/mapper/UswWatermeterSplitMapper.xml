@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.admin.mapper.UswWatermeterSplitMapper">
+  <select id="selectUswWatermeterSplitList" resultType="com.shanghaiwater.mcs.admin.vo.UswWatermeterSplitMgtVO" parameterType="java.util.Map">
+	select
+		incident.incident_id			incident_id
+		,incident.apply_no				apply_no
+		,incident.applicant				applicant
+		,incident.appdate				appdate
+		,incident.status				status
+		,incident.incident_type			incident_type
+		,incident.cert_type				cert_type
+		,incident.cert_number			cert_number
+		,incident.email					email
+		,(select item_value from sys_multi_code_detail where item_code = incident.xzq and parent_item_code = incident.company_name)					xzq
+		,incident.company_name			company_name
+		,incident.company_type			company_type
+		,incident.social_credit_code	social_credit_code
+		,incident.description			description
+		,wmsplit.fa_id				fa_id
+		,wmsplit.cm_sta				cm_sta
+		,wmsplit.update_dttm				update_dttm
+		,wmsplit.cis_company				cis_company
+		,wmsplit.business_type				business_type
+		,wmsplit.per_name				per_name
+		,wmsplit.address				address
+		,wmsplit.con_name				con_name
+		,wmsplit.contact_value				contact_value
+		,wmsplit.phone				phone
+		,wmsplit.mail				mail
+		,wmsplit.yb				yb
+		,wmsplit.comment				comment
+		,wmsplit.wygz				wygz
+
+	from	usw_watermeter_split			wmsplit
+	inner join mcs_incident				incident	on		wmsplit.incident_id		= incident.incident_id
+	where	1 = 1
+		and	incident.status			!=	'IncidentStatus.Draft'
+	<if test="isNormalAdmin">
+		and wmsplit.cis_company	=	#{companyCode,jdbcType=VARCHAR}
+	</if>
+	
+	<if test="status != null and status != ''">
+		and incident.status = #{status,jdbcType=VARCHAR}
+	</if>
+	<if test="startdate != null and startdate != ''">
+		and incident.appdate &gt;= #{startdate,jdbcType=VARCHAR}
+	</if>
+	<if test="enddate != null and enddate != ''">
+		and incident.appdate &lt; #{enddate,jdbcType=VARCHAR}
+	</if> 
+	<if test="limit != null and limit != ''">
+		limit #{page,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+	</if>
+	
+  </select>
+  
+   <select id="selectUswWatermeterSplitCount" resultType="Integer" parameterType="java.util.Map">
+	select
+		count(*)
+	from	usw_watermeter_split			wmsplit
+	inner join mcs_incident				incident	on		wmsplit.incident_id		= incident.incident_id
+	where	1 = 1
+		and	incident.status			!=	'IncidentStatus.Draft'
+	<if test="isNormalAdmin">
+		and wmsplit.cis_company	=	#{companyCode,jdbcType=VARCHAR}
+	</if>
+	<if test="status != null and status != ''">
+		and incident.status = #{status,jdbcType=VARCHAR}
+	</if>
+	<if test="startdate != null and startdate != ''">
+		and incident.appdate &gt;= #{startdate,jdbcType=VARCHAR}
+	</if>
+	<if test="enddate != null and enddate != ''">
+		and incident.appdate &lt; #{enddate,jdbcType=VARCHAR}
+	</if> 
+
+	
+  </select>
+  
+</mapper>

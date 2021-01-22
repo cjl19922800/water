@@ -1,0 +1,26 @@
+
+spring:  datasource:    url: jdbc:oracle:thin:@//81.68.238.221:1521/ctorcl    username: mcswater    password: Shw_2019_mwsys001
+  resources:    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${filePath}
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /**
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    mode: HTML5
+    prefix: classpath:/templates/
+    suffix: .html
+
+mybatis-plus:
+  mapper-locations: 
+  - classpath:mapper/*Mapper.xml
+  type-aliases-package: com.shanghaiwater.mcs.db.entity
+#log4j2日志#logging.config:#  src/main/resources/log4j2.xml
+  
+filePath: E:\image\img2\
+logging:
+  level:
+     com.shanghaiwater.mcs.db.mapper: debug  
+     

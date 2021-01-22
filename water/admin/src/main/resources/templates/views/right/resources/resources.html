@@ -1,0 +1,181 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>导航管理</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+        	<div class="layui-inline">
+        		<label class="layui-form-label">资源名称</label>
+        		<div class="layui-input-block">
+        			<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+        		</div>
+        	</div>
+        	<div class="layui-inline">
+        		<label class="layui-form-label">资源URL</label>
+        		<div class="layui-input-block">
+        			<input type="text" name="url" placeholder="请输入" autocomplete="off" class="layui-input">
+        		</div>
+        	</div>
+        	<div class="layui-inline">
+        		<label class="layui-form-label">模块名称</label>
+        		<div class="layui-input-block">
+        			<select name="modular" lay-search="">
+				  		<option value="">请选择</option>
+				  		<option th:each="modular:${model.modulars}" th:value="${modular}" th:text="${modular}"></option>
+			        </select>
+        		</div>
+        	</div>
+        	<div class="layui-inline">
+        		<button class="layui-btn layuiadmin-btn-admin" lay-submit lay-filter="LAY-log-back-search">
+        			<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+        		</button>
+        	</div>
+        </div>
+      </div>
+      <div class="layui-card-body">
+        <div style="padding-bottom: 10px;">
+          <button class="layui-btn layuiadmin-btn-role" onclick="addResources()">添加</button>
+        </div>
+      
+        <table id="LAY-user-back-navigation" lay-filter="LAY-user-back-navigation"></table>  
+        
+        <script type="text/html" id="table-useradmin-admin">
+          <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" >
+			<i class="layui-icon layui-icon-edit"></i>编辑
+		  </a>
+        </script>
+      </div>
+    </div>
+  </div>
+
+ <script src="../../../layuiadmin/layui/layui.js"></script>  
+ <script src="../../../js/jquery-1.11.0.min.js"></script>  
+  <script>
+  
+  layui.config({
+	    base: '../../../layuiadmin/' //静态资源所在路径
+	  }).extend({
+	    index: 'lib/index' //主入口模块
+	  }).use(['index', 'resources', 'table','form'], function(){
+	    var $ = layui.$
+	    ,form = layui.form
+	    ,table = layui.table
+		,form = layui.form;
+		
+	    //搜索日志
+	    form.on('submit(LAY-log-back-search)', function(data){
+			var field=data.field;
+	       //执行重载
+	       table.reload('LAY-user-back-navigation', {
+	     	  where: field
+	 		});
+	    });
+	  
+	    $('.layui-btn.layuiadmin-btn-log').on('click', function(){
+	      var type = $(this).data('type');
+	      active[type] ? active[type].call(this) : '';
+	    });
+	  });
+  
+  
+  
+  
+  function deleteNavigation(){
+	  var table = layui.table;
+// 	  var checkStatus = table.checkStatus('id')
+ 	  var checkStatus = table.checkStatus('LAY-user-back-navigation')
+      ,checkData = checkStatus.data; //得到选中的数据
+      if(checkData.length === 0){
+        return layer.msg('请选择数据');
+      }
+      
+      layer.confirm('确定删除吗？', function(index) {
+    	  var payload = JSON.stringify(checkData);
+          $.ajax({
+    			type:"post",
+    			contentType: 'application/json;charset=utf-8',
+    			dataType:"json",
+    			url:"/admin/power/navigation/delete",
+    			data:payload,
+                cache: false,
+                async: true,
+    			success:function(res){
+    				console.log(res);
+    				if(res.success){
+    		            table.reload('LAY-user-back-navigation'); //数据刷新
+    					layer.alert("删除成功。");
+    				}else{
+    		        	layer.alert("删除失败。");
+    				}
+    			}
+            });
+        table.reload('LAY-user-back-navigation');
+        layer.msg('已删除');
+      });
+	  
+	  
+	  
+  }
+  
+  
+  function addResources(){
+      layer.open({
+          type: 2
+          ,title: '添加新资源'
+          ,content: '/admin/power/resources/add'
+          ,area: ['50%', '90%']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var iframeWindow = window['layui-layer-iframe'+ index]
+            ,submit = layero.find('iframe').contents().find("#LAY-admin-user-add-submit");
+            //监听提交
+            iframeWindow.layui.form.on('submit(LAY-admin-user-add-submit)', function(data){
+              var field = data.field; //获取提交的字段
+              console.log(field);
+
+              //提交 Ajax 成功后，静态更新表格中的数据
+              var payload = JSON.stringify(field);
+              //提交 Ajax 成功后，静态更新表格中的数据
+              $.ajax({
+      			type:"post",
+      			contentType: 'application/json;charset=utf-8',
+      			dataType:"json",
+      			url:"/admin/power/resources/insert",
+      			data:payload,
+                  cache: false,
+                  async: true,
+      			success:function(res){
+      				console.log(res);
+      				if(res.success){
+      					layer.alert("创建成功。");
+      		            layer.close(index); //关闭弹层
+      		          	layui.table.reload('LAY-user-back-navigation'); //数据刷新
+      				}else{
+      		        	layer.alert("创建失败。");
+      				}
+      			}
+              });
+      		});
+            submit.trigger('click');
+          }
+        }); 
+  }
+  
+  
+  </script>
+</body>
+</html>
+

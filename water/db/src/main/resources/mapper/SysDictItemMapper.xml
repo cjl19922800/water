@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.db.mapper.SysDictItemMapper">
+  <select id="queryAllItemByCode" resultType="com.shanghaiwater.mcs.common.vo.DictItem" parameterType="java.util.Map">
+	select
+		di.dict_item_id
+		,di.dict_code
+		,di.item_code
+		,di.item_value
+		,di.description
+	from	sys_dict_item di
+	where	1 = 1
+		and	di.status		=	'Enable'
+	<if test="dictCode != null and dictCode != ''">
+		and di.dict_code	=	#{dictCode, jdbcType=VARCHAR}
+	</if>
+	<if test="itemCode != null and itemCode != ''">
+		and di.item_code	=	#{itemCode, jdbcType=VARCHAR}
+	</if>
+	order by dict_code, sort_no
+
+  </select>
+  
+</mapper>

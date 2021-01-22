@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">基本信息</div>
+                <div class="layui-card-body" pad15>
+                    <div class="layui-form" lay-filter="">
+                        <div class="layui-form-item">
+                            <div style="width:50%; float: left">
+                                <label class="layui-form-label">办件编号：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.incident.applyNo}"></span></label>
+                            </div>
+                             <div style="width:50%; float: left">
+                                <label class="layui-form-label">申请人：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.incident.applicant}"></span></label>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div style="width:50%; float: right">
+                                <label class="layui-form-label">申请时间：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${#dates.format(model.incident.appdate, 'yyyy-MM-dd HH:mm:ss')}"></span></label>
+                            </div>
+                            <div style="width:50%; float: right">
+                                <label class="layui-form-label">状态：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><sys:dictName th:value="${model.incident.status}" type="IncidentStatus"/></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card">
+                <div class="layui-card-header">申请信息</div>
+                <div class="layui-card-body" pad15>
+                    <div class="layui-form" lay-filter="">
+                        <div class="layui-form-item">
+                            <div style="width:50%; float: left">
+                                <label class="layui-form-label">销根号：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.incident.userNo}"></span></label>
+                            </div>
+                            <div style="width:50%; float: left">
+                                <label class="layui-form-label">用水地址：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.info.address}"></span></label>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div style="width:50%; float: left">
+                                <label class="layui-form-label">申请人：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.incident.applicant}"></span></label>
+                            </div>
+                            <div style="width:50%; float: left">
+                                <label class="layui-form-label">电话号码：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.info.contactValue}"></span></label>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div style="width:50%; float: left">
+                                <label class="layui-form-label">发票抬头：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.info.title}"></span></label>
+                            </div>
+                            <div style="width:50%; float: right">
+                                <label class="layui-form-label">电子邮箱：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.info.email}"></span></label>
+                            </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <div style="width:50%; float: left">
+                                <label class="layui-form-label">开户行：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.info.bank}"></span></label>
+                            </div>
+                            <div style="width:50%; float: right">
+                                <label class="layui-form-label">银行卡号：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.info.bankCard}"></span></label>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div style="width:50%; float: left">
+                                <label class="layui-form-label">账期：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.info.account}"></span></label>
+                            </div>
+                            <div style="width:50%; float: left">
+                                <label class="layui-form-label">账单金额：</label>
+                                <label class="layui-form-label" style="width: 50%; text-align: left;"><span th:text="${model.info.billAmount}"></span></label>
+                            </div>
+                             
+                        </div>
+                        
+                        
+                       
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="layui-card">
+                <div class="layui-card-header">材料列表</div>
+                <div class="layui-card-body" pad15>
+                    <div class="layui-form" lay-filter="">
+                    
+                    <div class="layui-form-item" th:each="imagemap:${model.imagemaps}">
+		              <div style="width:100%; float: left">
+		                <label class="layui-form-label" th:text="${imagemap.key}"></label>
+		                <div th:each="imageDetail:${imagemap.value}">
+		                	<a target="_blank" th:href="@{${imageDetail.webUri}}">查看</a>
+		                </div>
+		              </div>
+		            </div>
+                    
+                    
+                    
+                    </div>
+                </div>
+            </div>
+
+
+			
+
+
+
+
+<!--             <div class="layui-card"> -->
+<!--                 <div class="layui-card-header">材料列表</div> -->
+<!--                 <div class="layui-card-body" pad15> -->
+<!--                     <div class="layui-form" lay-filter=""> -->
+                    
+                    
+                    
+                    
+                    
+                    
+<!--                     <div class="layui-form-item" th:each="imagemap:${model.imagemaps}"> -->
+<!-- 		              <div style="width:100%; float: left"> -->
+<!-- 		                <label class="layui-form-label" th:text="${imagemap.key}"></label> -->
+<!-- 		                <div th:each="imageDetail:${imagemap.value}"> -->
+<!-- 		                	<img style="width:80px" th:if="${imageDetail.fileType ne '.pdf'}"  th:src="${imageDetail.webUri}" /> -->
+<!-- 		                </div> -->
+<!-- 		              </div> -->
+<!-- 		            </div> -->
+                    
+                    
+                    
+<!--                     </div> -->
+<!--                 </div> -->
+<!--             </div> -->
+
+        </div>
+    </div>
+		<div class="layui-form-item layui-hide">
+        <input type="text" name="incidentId" class="layui-input" th:value="${model.info.incidentId}">
+      </div>
+      <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="LAY-app-workorder-submit" id="LAY-app-workorder-submit" value="确认">
+      </div>
+</div>
+
+<script src="../../../layuiadmin/layui/layui.js"></script>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.db.mapper.AccHuipanDetailMapper">
+    <update id="updateUpstatus" parameterType="java.util.Map">
+            UPDATE mcs_huipan_Detail SET upstatus = #{upstatus} WHERE detail_Id = #{id}
+    </update>
+    <select id="findListByCounteroffer" resultType="com.shanghaiwater.mcs.db.entity.AccHuipanDetail" parameterType="java.util.Map">
+        SELECT
+        a.*
+        FROM
+        mcs_huipan_detail a
+        LEFT JOIN mcs_huipan b ON a.counteroffer_Id = b.counteroffer_Id
+        <where>
+            <if test="appid != null and appid != ''">
+                AND b.appid = #{appid}
+            </if>
+            <if test="upstatus != null and upstatus != ''">
+                AND a.upstatus = #{upstatus}
+            </if>
+        </where>
+        ORDER BY a.counteroffer_Id
+    </select>
+</mapper>

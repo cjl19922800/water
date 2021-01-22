@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.admin.mapper.McsIncidentMapper">
+  <select id="selectIncidentList" resultType="com.shanghaiwater.mcs.admin.vo.IncidentMgtVO" parameterType="java.util.Map">
+	select
+		incident.incident_id			incident_id
+		,incident.apply_no				apply_no
+		,incident.applicant				applicant
+		,incident.appdate				appdate
+		,incident.status				status
+		,incident.incident_type			incident_type
+		,(select item_value from sys_dict_item where dict_code='McsItemType' and item_code=incident.incident_type)	incident_type_label
+		,incident.shw_company			shw_company
+		,(select name from mgt_water_company where company_code = incident.shw_company)	shw_company_label
+		,incident.shw_address			shw_address
+		,incident.cert_type				cert_type
+		,incident.cert_number			cert_number
+		,incident.email					email
+		,incident.xzq					xzq
+		,(select item_value from sys_multi_code_detail where item_code = incident.xzq and parent_item_code = incident.company_name)	as xzq_lable
+		,incident.company_name			company_name
+		,incident.company_type			company_type
+		,incident.social_credit_code	social_credit_code
+		,incident.description			description
+	from	mcs_incident			incident
+	where	1 = 1 and	incident.status			!=	'IncidentStatus.Draft'
+	<if test="isNormalAdmin">
+		and incident.shw_company	=	#{companyCode,jdbcType=VARCHAR}
+	</if>
+	
+	<if test="incidentType != null and incidentType != ''">
+		and incident.incident_type = #{incidentType,jdbcType=VARCHAR}
+	</if>
+	<if test="status != null and status != ''">
+		and incident.status = #{status,jdbcType=VARCHAR}
+	</if>
+	<if test="startdate != null and startdate != ''">
+		and incident.appdate &gt;= #{startdate,jdbcType=VARCHAR}
+	</if>
+	<if test="enddate != null and enddate != ''">
+		and incident.appdate &lt; #{enddate,jdbcType=VARCHAR}
+	</if> 
+	<if test="limit != null and limit != ''">
+		limit #{page,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+	</if>
+	
+  </select>
+  
+   <select id="selectIncidentCount" resultType="Integer" parameterType="java.util.Map">
+	select
+		count(*)
+	from	mcs_incident			incident
+	where	1 = 1 and	incident.status			!=	'IncidentStatus.Draft'
+	<if test="isNormalAdmin">
+		and incident.shw_company	=	#{companyCode,jdbcType=VARCHAR}
+	</if>
+	
+	<if test="incidentType != null and incidentType != ''">
+		and incident.incident_type = #{incidentType,jdbcType=VARCHAR}
+	</if>
+	<if test="status != null and status != ''">
+		and incident.status = #{status,jdbcType=VARCHAR}
+	</if>
+	<if test="startdate != null and startdate != ''">
+		and incident.appdate &gt;= #{startdate,jdbcType=VARCHAR}
+	</if>
+	<if test="enddate != null and enddate != ''">
+		and incident.appdate &lt; #{enddate,jdbcType=VARCHAR}
+	</if> 
+
+  </select>
+
+</mapper>

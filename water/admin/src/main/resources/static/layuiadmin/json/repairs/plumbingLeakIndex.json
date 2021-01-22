@@ -1,0 +1,46 @@
+{
+  "code": 0
+  ,"msg": ""
+  ,"count": "5"
+  ,"data": [{
+    "repairsLocation": "屋外"
+    ,"repairsContent": "漏水"
+    ,"description": "水管漏水"
+    ,"incident_type": "报修"
+    ,"applicant": "张三"
+    ,"accept_company": "浦东威立雅"
+    ,"status": "处理中"
+  },{
+    "repairsLocation": "屋内"
+    ,"repairsContent": "破裂"
+    ,"description": "水管漏水"
+    ,"incident_type": "报修"
+    ,"applicant": "张三"
+    ,"accept_company": "浦东威立雅"
+    ,"status": "办结"
+  },{
+    "repairsLocation": "屋外"
+    ,"repairsContent": "有个小洞，漏水"
+    ,"description": "漏水"
+    ,"incident_type": "单位接水"
+    ,"applicant": "李四"
+    ,"accept_company": "供水分公司"
+    ,"status": "待分配"
+  },{
+    "repairsLocation": "屋内"
+    ,"repairsContent": "漏水"
+    ,"description": "水管漏水"
+    ,"incident_type": "报修"
+    ,"applicant": "李四"
+    ,"accept_company": "供水分公司"
+    ,"status": "待分配"
+  },{
+    "repairsLocation": "屋内"
+    ,"repairsContent": "漏水"
+    ,"description": "水管漏水"
+    ,"incident_type": "报修"
+    ,"applicant": "李四"
+    ,"accept_company": "供水分公司"
+    ,"status": "处理中"
+  }]
+}

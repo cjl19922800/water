@@ -1,0 +1,97 @@
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+  <meta charset="utf-8">
+  <title>日志管理</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+</head>
+<body>
+
+  <div class="layui-form" lay-filter="layuiadmin-form-group" id="layuiadmin-form-group" style="padding: 20px 30px 0 0;">
+<!-- 	<div class="layui-form-item"> -->
+<!-- 		<label class="layui-form-label">ID</label> -->
+<!-- 		<div class="layui-input-block"> -->
+<!-- 			<input type="text" name="id" th:value="${model.aulog.id}" readonly="true" class="layui-input"> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- 	<div class="layui-form-item"> -->
+<!-- 		<label class="layui-form-label">事件ID</label> -->
+<!-- 		<div class="layui-input-block"> -->
+<!-- 			<input type="text" name="eventid" th:value="${model.aulog.eventid}" readonly="true" class="layui-input"> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- 	<div class="layui-form-item"> -->
+<!-- 		<label class="layui-form-label">操作人</label> -->
+<!-- 		<div class="layui-input-block"> -->
+<!-- 			<input type="text" name="operator" th:value="${model.aulog.operator}" readonly="true" class="layui-input"> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+	<div class="layui-form-item">
+		<label class="layui-form-label">请求方法</label>
+		<div class="layui-input-block">
+			<input type="text" name="method" th:value="${model.aulog.method}" readonly="true" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">请求IP</label>
+		<div class="layui-input-block">
+			<textarea name="requestIp" placeholder="请输入内容" th:value="${model.aulog.requestIp}" readonly="true" class="layui-textarea">
+				
+			</textarea>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">请求URL</label>
+		<div class="layui-input-block">
+			<textarea name="requestUri" placeholder="请输入内容" th:text="${model.aulog.requestUri}" readonly="true" class="layui-textarea">
+				
+			</textarea>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-block">
+			<input type="text" name="status" th:value="${model.aulog.status}" readonly="true" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">结果</label>
+		<div class="layui-input-block">
+			<input type="text" name="result" th:value="${model.aulog.result}" readonly="true" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">起始时间</label>
+		<div class="layui-input-block">
+			<input type="text" name="startTime" th:value="${model.aulog.startTime}"
+			readonly="true" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">截止时间</label>
+		<div class="layui-input-block">
+			<input type="text" name="endTime" th:value="${model.aulog.endTime}"
+			readonly="true" class="layui-input">
+		</div>
+	</div>
+  </div>
+
+  <script src="../../../layuiadmin/layui/layui.js"></script>  
+  <script>
+  layui.config({
+    base: '../../../layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form','util'], function(){
+    var $ = layui.$
+	,util = layui.util
+    ,form = layui.form ;
+  })
+  </script>
+</body>
+</html>

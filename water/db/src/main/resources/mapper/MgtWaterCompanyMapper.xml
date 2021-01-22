@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.db.mapper.MgtWaterCompanyMapper">
+  <select id="queryWaterCompany" resultType="com.shanghaiwater.mcs.common.vo.WaterCompany" parameterType="java.util.Map">
+	select
+		company.water_company_id
+		,company.company_code
+		,company.type
+		,company.name
+		,company.short_name
+		,company.address
+		,company.description
+	from	mgt_water_company company
+	where	1 = 1
+	<if test="type != null and type != ''">
+		and company.type	=	#{type, jdbcType=VARCHAR}
+	</if>
+	<if test="companyCode != null and companyCode != ''">
+		and company.company_code	=	#{companyCode, jdbcType=VARCHAR}
+	</if>
+		
+	order by	sort_no
+
+  </select>
+ 
+</mapper>

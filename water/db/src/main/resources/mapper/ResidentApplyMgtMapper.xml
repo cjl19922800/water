@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.db.mapper.ResidentApplyMgtMapper">
+
+  <select id="selectResidentApplyList" resultType="com.shanghaiwater.mcs.common.vo.ResidentApplyMgtVO">
+	select
+		incident.incident_id			incident_id
+		,incident.apply_no				apply_no
+		,incident.applicant				applicant
+		,incident.appdate				appdate
+		,incident.status				status
+		,incident.incident_type			incident_type
+		,incident.cert_type				cert_type
+		,incident.cert_number			cert_number
+		,incident.email					email
+		,incident.company_name			company_name
+		,incident.company_type			company_type
+		,incident.social_credit_code	social_credit_code
+		,incident.description			description
+		,resiapply.fa_id				fa_id
+		,resiapply.cm_sta				cm_sta
+		,resiapply.update_dttm			update_dttm
+		,resiapply.cis_company			cis_company
+		,resiapply.business_type		business_type
+		,resiapply.per_name				per_name
+		,resiapply.xzq					xzq_apply
+		,resiapply.address				address
+		,resiapply.apply_content		apply_content
+		,resiapply.con_name				con_name
+		,resiapply.phone				phone
+		,resiapply.mail					mail
+		,resiapply.wygz					wygz
+		,resiapply.contact_address		contact_address
+	from	usw_resident_apply			resiapply
+	inner join mcs_incident				incident
+	on		resiapply.incident_id		= incident.incident_id
+
+  </select>
+
+</mapper>

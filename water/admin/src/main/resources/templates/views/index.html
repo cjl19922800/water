@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+	<head>
+		<meta charset="utf-8">
+		<title>MCS后台管理系统</title>
+		<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+		<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+		<meta HTTP-EQUIV="expires" CONTENT="0">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+
+	</head>
+	<body class="layui-layout-body">
+
+		<div id="LAY_app">
+			<div class="layui-layout layui-layout-admin">
+				<div class="layui-header">
+					<!-- 头部区域 -->
+					<ul class="layui-nav layui-layout-left">
+						<li class="layui-nav-item layadmin-flexible" lay-unselect>
+							<a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+								<i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+							</a>
+						</li>
+						<li class="layui-nav-item" lay-unselect>
+							<a href="javascript:;" layadmin-event="refresh" title="刷新">
+								<i class="layui-icon layui-icon-refresh-3"></i>
+							</a>
+						</li>
+					</ul>
+					<ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+
+						<li class="layui-nav-item" lay-unselect>
+							<a href="javascript:;">
+								<cite><span th:text="${session.adminLoginInfo.userName}" ></span></cite>
+							</a>
+							<dl class="layui-nav-child">
+								<dd style="text-align: center;"><a onclick="deleteSession()">退出</a></dd>
+<!-- 								<dd layadmin-event="logout" style="text-align: center;"> -->
+<!-- 									<a>退出</a> -->
+<!-- 								</dd> -->
+							</dl>
+						</li>
+
+						<li class="layui-nav-item" lay-unselect>
+							<a href="javascript:;" layadmin-event="about1"><i class="layui-icon layui-icon-more-vertical"></i></a>
+						</li>
+					</ul>
+				</div>
+
+				<!-- 侧边菜单 -->
+				<div class="layui-side layui-side-menu">
+					<div class="layui-side-scroll">
+						<div class="layui-logo" lay-href="/home/console/view">
+							<span>微客服管理后台</span>
+						</div>
+
+						<ul class="layui-nav layui-nav-tree" lay-shrink="" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+
+							<li data-name="home" class="layui-nav-item layui-nav-itemed">
+								<a href="javascript:;" lay-tips="主页" lay-direction="2">
+									<i class="layui-icon layui-icon-home"></i>
+									<cite>主页</cite>
+								</a>
+								<dl class="layui-nav-child">
+
+									<dd data-name="console" class="layui-this">
+										<a lay-href="home/console/view">工作台</a>
+									</dd>
+								</dl>
+							</li>
+
+
+
+							<li data-name="user" th:each="powersMap:${model.powersMapList}" class="layui-nav-item">
+								<a href="javascript:;"  lay-direction="2">
+									<i class="layui-icon layui-icon-home"></i>
+									<cite th:text="${powersMap.key}"></cite>
+								</a>
+								<dl class="layui-nav-child">
+									<dd data-name="console" th:each="power:${powersMap.value}">
+										<a th:attr="lay-href=@{${power.url}}" th:text="${power.navName}"></a>
+									</dd>
+								</dl>
+							</li>
+
+						
+
+
+
+
+<!-- 							<li data-name="home" class="layui-nav-item layui-nav-itemed"> -->
+<!-- 								<a href="javascript:;" lay-tips="权限管理2" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-home"></i> -->
+<!-- 									<cite>权限管理2</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+<!-- 									<dd data-name="incident"> -->
+<!-- 										<a lay-href="admin/power/resources/list">资源管理</a> -->
+<!-- 									</dd> -->
+<!-- 								</dl> -->
+<!-- 							</li> -->
+<!-- 							<li data-name="home" class="layui-nav-item layui-nav-itemed"> -->
+<!-- 								<a href="javascript:;" lay-tips="主页" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-home"></i> -->
+<!-- 									<cite>主页</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+
+<!-- 									<dd data-name="console" class="layui-this"> -->
+<!-- 										<a lay-href="home/console/view">工作台</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd data-name="incident"> -->
+<!-- 										<a lay-href="home/incident/listview">申请单</a> -->
+<!-- 									</dd> -->
+<!-- 									<div > -->
+									
+<!-- 									<dd th:if="${session.adminLoginInfo != null} and (${session.adminLoginInfo.isRootAdmin} or ${session.adminLoginInfo.isSHWAdmin})" data-name="returnincident" > -->
+<!-- 										<a lay-href="home/retincident/listview">退单管理</a> -->
+<!-- 									</dd></div> -->
+<!-- 								</dl> -->
+<!-- 							</li> -->
+<!-- 							<li data-name="app" class="layui-nav-item"> -->
+<!-- 								<a href="javascript:;" lay-tips="用水业务" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-app"></i> -->
+<!-- 									<cite>用水接入</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+<!-- 									<dd data-name="workorder"> -->
+<!-- 										<a lay-href="resiapply/listview">居民用水申请</a> -->
+<!-- 									</dd> -->
+
+<!-- 									<dd data-name="workorder"> -->
+<!-- 										<a lay-href="comapply/listview">单位接水申请</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="home/resitrans/listview">居民过户</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="home/comtrans/listview">单位过户</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="home/wmsplit/listview">居民住宅总表分装</a> -->
+<!-- 									</dd> -->
+
+<!-- 								</dl> -->
+<!-- 							</li> -->
+<!-- 							<li data-name="user" class="layui-nav-item"> -->
+<!-- 								<a href="javascript:;" lay-tips="报修" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-user"></i> -->
+<!-- 									<cite>报修</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="home/repairs/plumbingLeakIndex">报修（水管漏水）</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="home/repairs/waterProblemsIndex">报修（用水问题）</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="home/repairs/waterQualityProblemsIndex">报修（水质问题）</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="home/repairs/tableForIndex">报修（表务问题）</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="home/repairs/otherProblemsIndex">报修（其它）</a> -->
+<!-- 									</dd> -->
+<!-- 								</dl> -->
+<!-- 							</li> -->
+<!-- 							<li data-name="user" class="layui-nav-item"> -->
+<!-- 								<a href="javascript:;" lay-tips="其他业务" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-user"></i> -->
+<!-- 									<cite>统计报表</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/log/listview">统计报表</a> -->
+<!-- 									</dd> -->
+<!-- 								</dl> -->
+<!-- 							</li> -->
+<!-- 							<li th:if="${session.adminLoginInfo.isRootAdmin}" data-name="user" class="layui-nav-item"> -->
+<!-- 								<a href="javascript:;" lay-tips="权限管理" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-user"></i> -->
+<!-- 									<cite>发布管理</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/log/listview">发布管理</a> -->
+<!-- 									</dd> -->
+<!-- 								</dl> -->
+<!-- 							</li> -->
+<!-- 							<li th:if="${session.adminLoginInfo.isRootAdmin}" data-name="user" class="layui-nav-item"> -->
+<!-- 								<a href="javascript:;" lay-tips="权限管理" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-user"></i> -->
+<!-- 									<cite>客户管理</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/group/group.html">用户审核</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/adminuser/listview">用户查询</a> -->
+<!-- 									</dd> -->
+<!-- 									</dl> -->
+<!-- 							</li> -->
+<!-- 							<li th:if="${session.adminLoginInfo.isRootAdmin}" data-name="user" class="layui-nav-item"> -->
+<!-- 								<a href="javascript:;" lay-tips="权限管理" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-user"></i> -->
+<!-- 									<cite>权限管理</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+<!-- 									<dd style="display: none;"> -->
+<!-- 										<a lay-href="right/group/group.html">用户组</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/adminuser/listview">管理员</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/role/listview">角色</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd><a lay-href="password/listview">密码策略</a></dd>	 -->
+<!-- 									</dl> -->
+<!-- 							</li> -->
+<!-- 							<li th:if="${session.adminLoginInfo.isRootAdmin}" data-name="user" class="layui-nav-item"> -->
+<!-- 								<a href="javascript:;" lay-tips="权限管理" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-user"></i> -->
+<!-- 									<cite>日志管理</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/log/listview">应用日志</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/aulog/listview">审计日志</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/right/taskLog/listview">对账日志</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/flowsheet/listview">交易流水单</a> -->
+<!-- 									</dd> -->
+<!-- 									<dd> -->
+<!-- 										<a lay-href="right/db/listview">通用日志查询</a> -->
+<!-- 									</dd> -->
+<!-- 								</dl> -->
+<!-- 							</li> -->
+<!-- 							<li th:if="${session.adminLoginInfo == null}" data-name="set" class="layui-nav-item"> -->
+<!-- 								<a href="javascript:;" lay-tips="用户设置" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-set"></i> -->
+<!-- 									<cite>用户设置</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+<!-- 									<dd><a lay-href="set/user/info.html">基本资料</a></dd> -->
+<!-- 									<dd><a lay-href="set/user/password.html">修改密码</a></dd> -->
+<!-- 								</dl> -->
+
+<!-- 							</li> -->
+<!-- 							<li th:if="${session.adminLoginInfo.userId} ne '1'" data-name="set" class="layui-nav-item"> -->
+<!-- 								<a href="javascript:;" lay-tips="用户设置" lay-direction="2"> -->
+<!-- 									<i class="layui-icon layui-icon-set"></i> -->
+<!-- 									<cite>用户设置</cite> -->
+<!-- 								</a> -->
+<!-- 								<dl class="layui-nav-child"> -->
+<!-- 									<dd><a lay-href="set/adminuser/detail">基本资料</a></dd> -->
+<!-- 									<dd><a lay-href="set/password/detail">修改密码</a></dd> -->
+<!-- 								</dl> -->
+
+<!-- 							</li> -->
+
+						</ul>
+					</div>
+				</div>
+
+				<!-- 页面标签 -->
+				<div class="layadmin-pagetabs" id="LAY_app_tabs">
+					<div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+					<div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+					<div class="layui-icon layadmin-tabs-control layui-icon-down">
+						<ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+							<li class="layui-nav-item" lay-unselect>
+								<a href="javascript:;"></a>
+								<dl class="layui-nav-child layui-anim-fadein">
+									<dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+									<dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+									<dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+								</dl>
+							</li>
+						</ul>
+					</div>
+					<div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+						<ul class="layui-tab-title" id="LAY_app_tabsheader">
+							<li lay-id="/home/console/view" lay-attr="/home/console/view" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+						</ul>
+					</div>
+				</div>
+				 <div class="layui-btn-container layadmin-layer-demo">
+              		<button class="layui-btn layui-btn-primary" data-type="test5">Page</button>
+            	</div>
+
+
+				<!-- 主体内容 -->
+				<div class="layui-body" id="LAY_app_body">
+					<div class="layadmin-tabsbody-item layui-show">
+						<iframe src="/home/console/view" frameborder="0" class="layadmin-iframe"></iframe>
+					</div>
+				</div>
+
+				<!-- 辅助元素，一般用于移动设备下遮罩 -->
+				<div class="layadmin-body-shade" layadmin-event="shade"></div>
+			</div>
+		</div>
+
+		<script src="../layuiadmin/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use('index');
+		</script>
+		
+		
+
+		<!-- 百度统计 -->
+		<script>
+			var _hmt = _hmt || [];
+			(function() {
+				var hm = document.createElement("script");
+				hm.src = "https://hm.baidu.com/hm.js?d214947968792b839fd669a4decaaffc";
+				var s = document.getElementsByTagName("script")[0];
+				s.parentNode.insertBefore(hm, s);
+			})();
+			
+			
+			
+			
+			function deleteSession() {
+				 window.location.href="/dologOut"; 
+			} 
+		</script>
+	</body>
+</html>

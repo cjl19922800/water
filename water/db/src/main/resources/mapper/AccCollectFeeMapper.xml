@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.db.mapper.AccCollectFeeMapper">
+
+		<select id="findAccCollectFee" resultType="com.shanghaiwater.mcs.db.entity.AccCollectFee" parameterType="java.lang.String">
+			select * from mcs_collectfees where substr(orderid, 8, 20) = #{flow_no,jdbcType=VARCHAR}
+		</select>
+
+</mapper>

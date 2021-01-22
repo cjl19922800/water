@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>layuiAdmin 角色管理</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+	</head>
+	<body>
+		<div class="layui-fluid">
+		    <div class="layui-card">
+				<div class="layui-form layui-card-header layuiadmin-card-header-auto">
+					<div class="layui-form-item layui-form-text">
+						<div class="layui-inline">
+							<label class="layui-form-label">公司</label>
+							<div class="layui-input-inline">
+								<select name="optarget">
+									<option value=""></option>
+									<option value="GSFGS">供水分公司</option>
+									<option value="PDWLYZLS">浦东威立雅</option>
+									<option value="PDXQZLS">浦东新区</option>
+									<option value="SBBSZLS">市北宝山</option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">事件类型</label>
+							<div class="layui-input-inline">
+								<select name="eventid">
+									<option value=""></option>
+									<option value="MCS.Task.huipan">回盘</option>
+									<option value="MCS.Task.duizhang">对账</option>
+									<option value="MCS.Task.diff">差异对账</option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">结果</label>
+							<div class="layui-input-inline">
+								<select name="result">
+									<option value=""></option>
+									<option value="OK">处理成功</option>
+									<option value="FAILURE">重大异常</option>
+									<option value="START">流程开始</option>
+									<option value="END">流程结束</option>
+									<option value="INFO">中间流程</option>
+									<option value="ERROR">异常</option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">起始日期</label>
+							<div class="layui-input-inline">
+								<input type="text" placeholder="yyyy-MM-dd" name="startTime" id="startTime" class="layui-input" autocomplete="off">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">截止时间</label>
+							<div class="layui-input-inline">
+								<input type="text" placeholder="yyyy-MM-dd" name="endTime" id="endTime" class="layui-input" autocomplete="off">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<div class="layui-input-inline">
+								<button class="layui-btn" lay-submit lay-filter="task-search">
+									<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+								</button>
+							</div>
+						
+						</div>
+					</div>
+				</div>
+				<div class="layui-card-body">
+						  
+						<table id="task-back-search" lay-filter="task-back-search"></table>  
+						
+						<script type="text/html" id="table-useradmin-admin">
+						  <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail">
+							<i class="layui-icon layui-icon-detail"></i>详情
+						  </a>
+						</script>
+				</div>
+			</div>
+		</div>
+			
+	<script src="../../../layuiadmin/layui/layui.js"></script>  
+	<script>
+		layui.config({
+		  base: '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+		  index: 'lib/index' //主入口模块
+		}).use(['index', 'task', 'table','laydate','form'], function(){
+			var $ = layui.$
+			,form = layui.form
+			,table = layui.table
+			,laydate = layui.laydate
+			,form = layui.form
+			laydate.render({
+				elem: '#startTime'
+				,type:'datetime'
+				,format:'yyyy-MM-dd HH:mm'
+				,done: function(value, date){
+					laydate.render({
+						elem: '#endTime'
+						,type:'datetime'
+						,value: new Date()
+						,format:'yyyy-MM-dd HH:mm'
+					});
+				}
+			});
+			
+		  //搜索日志
+			form.on('submit(task-search)', function(data){
+				
+				var field=data.field;
+				if(field.startTime!==""&&field.endTime!==""){
+					console.log(field.startTime);
+					
+					if(field.endTime<field.startTime){
+						layer.open({
+								content:'截止时间不能小于起始时间'
+						});
+					}else{
+						table.reload('task-back-search', {
+								where:{
+									optarget:field.optarget,
+									eventid:field.eventid,
+									result:field.result,
+									startTime:field.startTime,
+									endTime:field.endTime
+								}
+						});
+							
+					}
+					
+				}else{
+					
+					if(field.endTime===""&&field.startTime!==""){
+						layer.open({
+							content:'请输入截止时间'
+						});
+					}
+					if(field.endTime!==""&&field.startTime===""){
+						layer.open({
+							content:'请输入起始时间'
+						});
+					}
+					
+					if(field.endTime===""&&field.startTime===""){
+						
+						console.log(field);
+						table.reload('task-back-search', {
+								where:{
+									optarget:field.optarget,
+									eventid:field.eventid,
+									result:field.result,
+									startTime:field.startTime,
+									endTime:field.endTime
+								}
+						});
+						
+					}
+				}
+		  });
+		
+		  //事件
+		  var active = {
+		    batchdel: function(){
+		      var checkStatus = table.checkStatus('LAY-user-back-role')
+		      ,checkData = checkStatus.data; //得到选中的数据
+		
+		      if(checkData.length === 0){
+		        return layer.msg('请选择数据');
+		      }
+		      
+		      layer.confirm('确定删除吗？', function(index) {
+		          
+		        //执行 Ajax 后重载
+		        /*
+		        admin.req({
+		          url: 'xxx'
+		          //,……
+		        });
+		        */
+		        table.reload('LAY-user-back-role');
+		        layer.msg('已删除');
+		      });
+		    },
+		    add: function(){
+		      layer.open({
+		        type: 2
+		        ,title: '添加新角色'
+		        ,content: 'roleform.html'
+		        ,area: ['500px', '480px']
+		        ,btn: ['确定', '取消']
+		        ,yes: function(index, layero){
+		          var iframeWindow = window['layui-layer-iframe'+ index]
+		          ,submit = layero.find('iframe').contents().find("#LAY-user-role-submit");
+		
+		          //监听提交
+		          iframeWindow.layui.form.on('submit(LAY-user-role-submit)', function(data){
+		            var field = data.field; //获取提交的字段
+		            
+		            //提交 Ajax 成功后，静态更新表格中的数据
+		            //$.ajax({});              
+		            table.reload('LAY-user-back-role');
+		            layer.close(index); //关闭弹层
+		          });  
+		          
+		          submit.trigger('click');
+		        }
+		      }); 
+		    }
+		  } 
+		  $('.layui-btn.layuiadmin-btn-log').on('click', function(){
+		    var type = $(this).data('type');
+		    active[type] ? active[type].call(this) : '';
+		  });
+		});
+		
+	</script>
+	</body>
+</html>

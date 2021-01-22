@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanghaiwater.mcs.db.mapper.McsIncidentMapper">
+	<!-- 查询申请单列表 -->
+	<select id="selectApiIncidentList" resultType="com.shanghaiwater.mcs.db.vo.ApiIncidentVo" parameterType="java.util.Map">
+	SELECT
+		incident.USER_NO,
+		incident.INCIDENT_ID,
+		incident.INCIDENT_TYPE,
+		incident.APPLY_NO,
+		incident.APPDATE,
+		incident.STATUS,
+		(SELECT ship.ALIAS FROM MCS_MEMBER_RELATIONSHIP ship WHERE ship.USER_ID = incident.CREATOR AND ship.STATUS = 0 AND ship.USER_NO = incident.USER_NO) AS ALIAS
+	FROM
+		MCS_INCIDENT incident
+	WHERE
+		1 = 1
+	<if test="userId != null and userId != ''">
+		AND incident.CREATOR = #{userId,jdbcType=VARCHAR}
+	</if>	
+	<!-- 类别  -->
+	<if test="incidentType != null and incidentType != ''">
+		AND incident.INCIDENT_TYPE = #{incidentType,jdbcType=VARCHAR}
+	</if>
+	<!-- 户号 -->
+	<if test="userNo != null and userNo != ''">
+		AND incident.USER_NO = #{userNo,jdbcType=VARCHAR}
+	</if>
+	<!-- 进度状态 -->
+	<if test="status != null and status != ''">
+		AND incident.STATUS = #{status,jdbcType=VARCHAR}
+	</if>
+	<!-- 开始时间 -->
+	<if test="startTime != null and startTime != ''">
+		AND incident.APPDATE &gt;= TO_DATE(#{startTime,jdbcType=VARCHAR})
+	</if>
+	<!-- 结束时间 -->
+	<if test="endTime != null and endTime != ''">
+		AND incident.APPDATE &lt; TO_DATE(#{endTime,jdbcType=VARCHAR})
+	</if> 
+	ORDER BY incident.APPDATE DESC
+	</select>
+	
+	
+	<select id="selectApiIncidentListAll" resultType="com.shanghaiwater.mcs.db.vo.ApiIncidentVo" parameterType="java.util.Map">
+	
+	SELECT t.* FROM (
+		SELECT
+			to_nchar(incident.USER_NO) AS USER_NO,
+			incident.INCIDENT_ID,
+			incident.INCIDENT_TYPE AS INCIDENT_TYPE,
+			incident.APPLY_NO,
+			incident.APPDATE,
+			incident.STATUS,
+			(SELECT ship.ALIAS FROM MCS_MEMBER_RELATIONSHIP ship WHERE ship.USER_ID = incident.CREATOR AND ship.STATUS = 0 AND ship.USER_NO = incident.USER_NO) AS ALIAS
+		FROM
+			MCS_INCIDENT incident
+		WHERE
+		1 = 1
+	<if test="userId != null and userId != ''">
+		AND incident.CREATOR = #{userId,jdbcType=VARCHAR}
+	</if>	
+	<!-- 类别  -->
+	<if test="incidentType != null and incidentType != ''">
+		AND incident.INCIDENT_TYPE = #{incidentType,jdbcType=VARCHAR}
+	</if>
+	<!-- 户号 -->
+	<if test="userNo != null and userNo != ''">
+		AND incident.USER_NO = #{userNo,jdbcType=VARCHAR}
+	</if>
+	<!-- 进度状态 -->
+	<if test="status != null and status != ''">
+		AND incident.STATUS = #{status,jdbcType=VARCHAR}
+	</if>
+	
+	<!-- 开始时间 -->
+	<if test="startTime != null and startTime != ''">
+		AND incident.APPDATE &gt;= TO_DATE(#{startTime,jdbcType=VARCHAR},'yyyy-MM-dd HH24:mi:ss')
+	</if>
+	<!-- 结束时间 -->
+	<if test="endTime != null and endTime != ''">
+		AND incident.APPDATE &lt; TO_DATE(#{endTime,jdbcType=VARCHAR},'yyyy-MM-dd HH24:mi:ss')
+	</if> 
+	
+	
+	UNION ALL
+
+	SELECT 
+		incidenttemp.USER_NO,
+		incidenttemp.INCIDENT_ID,
+		incidenttemp.INCIDENT_TYPE AS INCIDENT_TYPE,
+		to_nchar('') AS APPLY_NO,
+		incidenttemp.CDATE AS APPDATE,
+		to_nchar('IncidentStatus.TempSave') AS STATUS,
+		(
+		SELECT
+			ship.ALIAS 
+		FROM
+			MCS_MEMBER_RELATIONSHIP ship 
+		WHERE
+			ship.USER_ID = incidenttemp.CDTOR 
+			AND ship.STATUS = 0 
+			AND ship.USER_NO = incidenttemp.USER_NO 
+	) AS ALIAS 
+		FROM
+			MCS_INCIDENT_TEMP_SAVE incidenttemp
+		WHERE
+		1 = 1 
+	<if test="userId != null and userId != ''">
+		AND incidenttemp.CDTOR = #{userId,jdbcType=VARCHAR}
+	</if>	
+	<!-- 类别  -->
+	<if test="incidentType != null and incidentType != ''">
+		AND incidenttemp.INCIDENT_TYPE = #{incidentType,jdbcType=VARCHAR}
+	</if>
+	<!-- 户号 -->
+	<if test="userNo != null and userNo != ''">
+		AND incidenttemp.USER_NO = #{userNo,jdbcType=VARCHAR}
+	</if>
+	<!-- 进度状态 -->
+	<if test="status != null and status != '' and status != 'IncidentStatus.TempSave'.toString()">
+		AND 1 = 2
+	</if>
+	
+	<!-- 开始时间 -->
+	<if test="startTime != null and startTime != ''">
+		AND incidenttemp.CDATE &gt;= TO_DATE(#{startTime,jdbcType=VARCHAR},'yyyy-MM-dd HH24:mi:ss')
+	</if>
+	<!-- 结束时间 -->
+	<if test="endTime != null and endTime != ''">
+		AND incidenttemp.CDATE &lt; TO_DATE(#{endTime,jdbcType=VARCHAR},'yyyy-MM-dd HH24:mi:ss')
+	</if> )
+	t ORDER BY t.APPDATE DESC
+	</select>
+	
+</mapper>

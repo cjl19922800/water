@@ -1,0 +1,68 @@
+server:
+  port: 5050
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@//81.68.238.221:1521/ctorcl
+    username: mcswater
+    password: Shw_2019_mwsys001
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${filePath}
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /**
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    mode: HTML5
+    prefix: classpath:/templates/
+    suffix: .html
+
+
+#log4j2日志
+#logging.config:
+#  src/main/resources/log4j2.xml
+  
+filePath: /usr/local/image/
+logging:
+  level:
+     com.shanghaiwater.mcs.db.mapper: debug
+     
+     
+ywtb:
+  endpoint: http://117.184.226.70:8022/ac-product-api
+  oauthEndpoint: http://117.184.226.149
+  version: 0.1
+  clientId: SHCTSH
+  clientSecret: 111111b
+  
+mcsws:
+  endpointGSFGSRepair: http://117.184.226.70:8022/ac-product-api
+  endpointPDWLYZLS: http://10.6.96.59:8896/YWTB_WS.asmx
+  endpointPDXQZLS: http://10.95.200.108:88/YWTB_WS.asmx
+  endpointSBBSZLS: http://10.122.8.37:90/YWTB_WS.asmx
+  endpointYWSLFGS: http://10.9.8.11:8015/WKFApplyService.asmx
+
+cis:
+  endpointCisAddress: http://10.3.1.32:8011/ouaf/XAIApp/xaiserver/R00601000026?wsdl
+  endpointCisBill: http://10.3.1.32:8011/ouaf/XAIApp/xaiserver/R00601000024?wsdl
+  endpointCisCertInfo: http://10.3.1.32:8011/ouaf/XAIApp/xaiserver/R00601000025?wsdl
+  endpointCisRepair: http://10.3.1.32:8011/ouaf/XAIApp/xaiserver/CM-YWTCreFOFA?wsdl
+
+# ftp服务器相关
+jtftp:
+#  hostname: 192.168.6.164
+  hostname: 192.168.6.170
+  port: 21
+  username: root
+  password: 123456
+  
+iniswitch:   
+  ywtFlag:
+    true
+  webFlag:
+    true
+  imageFlag:
+    true
+     

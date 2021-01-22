@@ -1,0 +1,175 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>登入 - layuiAdmin</title>
+	<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+	<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+	<meta HTTP-EQUIV="expires" CONTENT="0">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+  <link rel="stylesheet" href="../../layuiadmin/style/login.css" media="all">
+</head>
+<body style="background-color: #01AAED;">
+
+  <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+
+    <div class="layadmin-user-login-main" style="background-color: #FFFFFF;margin-top: 100px;">
+      <div class="layadmin-user-login-box layadmin-user-login-header">
+        <h2>微客服后台管理系统</h2>
+     
+      </div>
+      <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+        <div class="layui-form-item">
+          <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+          <input type="text" name="userId" id="LAY-user-login-username" value="sysadmin" lay-verify="required" placeholder="用户名" class="layui-input">
+        </div>
+        <div class="layui-form-item">
+          <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+          <input type="password" name="userPassword" value="" id="LAY-user-login-password" lay-verify="required" placeholder="密码" class="layui-input">
+        </div>
+		
+		<div class="layui-form-item">
+			
+				<div class="layui-input-inline">
+					<input type="text" name="tryCode" class="layui-input"/>
+				</div>
+				
+					<img id="imgCode" alt="验证码" onclick="this.src='/defaultKaptcha?d='+new Date()*1" src="/defaultKaptcha" />
+				
+			
+		</div>
+
+
+
+        <div class="layui-form-item">
+			<button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
+        </div>
+       
+      </div>
+    </div>
+    
+    <div class="layui-trans layadmin-user-login-footer">
+      
+      <p>© 2018 <a href="http://www.shanghaiwater.com/" target="_blank">上海城投水务（集团）有限公司</a></p>
+    </div>
+    
+    <!--<div class="ladmin-user-login-theme">
+      <script type="text/html" template>
+        <ul>
+          <li data-theme=""><img src="{{ layui.setter.base }}style/res/bg-none.jpg"></li>
+          <li data-theme="#03152A" style="background-color: #03152A;"></li>
+          <li data-theme="#2E241B" style="background-color: #2E241B;"></li>
+          <li data-theme="#50314F" style="background-color: #50314F;"></li>
+          <li data-theme="#344058" style="background-color: #344058;"></li>
+          <li data-theme="#20222A" style="background-color: #20222A;"></li>
+        </ul>
+      </script>
+    </div>-->
+    
+  </div>
+  <script src="../../layuiadmin/layui/layui.js"></script>  
+  <script>
+  layui.config({
+    base: '../../layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'user'], function(){
+    var $ = layui.$
+    ,setter = layui.setter
+    ,admin = layui.admin
+    ,form = layui.form
+    ,router = layui.router()
+    ,search = router.search;
+
+    form.render();
+
+    //提交
+    form.on('submit(LAY-user-login-submit)', function(obj){
+		$.ajax({
+			url:'/imgvrifyControllerDefaultKaptcha?tryCode='+obj.field.tryCode,
+			success:function(res){
+				if(res){
+					//请求登入接口
+					admin.req({
+					  url: '/dologin' //实际使用请改成服务端真实接口
+					 	,type:"post"
+							,contentType: 'application/json;charset=utf-8'
+							,dataType:"json"
+					  ,data: JSON.stringify(obj.field)
+					  ,done: function(res){
+					  
+					  	console.log(res);
+								if(res.success){
+									
+									if (res.status == '0') {
+										console.log("首次登录需重置密码");
+										layer.open({
+									          title:'首次登录需重置密码'
+									          ,type: 2
+									          //,skin: 'layui-layer-rim'
+									          ,shadeClose: true
+									          ,area: admin.screen() < 2 ? ['80%', '300px'] : ['700px', '500px']
+									          ,content: '/set/password/detail'
+									        });
+										//location.href = '../'; //后台主页
+									} else {
+										location.href = '../'; //后台主页
+									}
+									
+									
+									
+									//登入成功的提示与跳转
+									/*
+							          layer.msg('登录成功', {
+							            offset: '15px'
+							            ,icon: 1
+							            ,time: 1000
+							          }, function(){
+							            location.href = '../'; //后台主页
+							          });*/
+								}else{
+									var tagImg = document.getElementById('imgCode');
+									if (tagImg != undefined) {
+								        tagImg.src = "/defaultKaptcha?id=" + Math.random();
+								    }
+									
+									
+					      			layer.alert("用户名或密码不正确。");
+								}
+					    
+					  }
+					});
+				}else{
+					$("img").attr('src','/defaultKaptcha?d='+new Date()*1);
+					//img.src='/defaultKaptcha?d='+new Date()*1
+					layer.open({
+						content:'验证码输入错误'
+					})
+				}
+	  		}
+	  		
+			
+	  });
+      
+      
+    });
+
+    
+  });
+  
+//   	window.addEventListener("popstate", function(e) { 
+  		
+// 	  alert("我监听到了浏览器的返回按钮事件啦");//根据自己的需求实现自己的功能 
+//   		return;
+//   }, false);
+  
+  
+  </script>
+</body>
+</html>

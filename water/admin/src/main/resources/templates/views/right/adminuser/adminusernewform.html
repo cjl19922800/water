@@ -1,0 +1,94 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>用户组管理</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+</head>
+<body>
+
+  <div class="layui-form" lay-filter="layuiadmin-form-user-add" id="layuiadmin-form-user-add" style="padding: 20px 30px 0 0;">
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">用户ID</label>
+      <div class="layui-input-block">
+        <input type="text" name="userId" lay-verify="required"  placeholder="请输入用户ID" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">用户名</label>
+      <div class="layui-input-block">
+        <input type="text" name="userName" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    
+    <div class="layui-form-item">
+      <label class="layui-form-label">密码</label>
+      <div class="layui-input-block">
+        <input type="password" name="userPassword" lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">确认密码</label>
+      <div class="layui-input-block">
+        <input type="password" name="rePassword" lay-verify="required" placeholder="请输入确认密码" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    
+    <div class="layui-form-item">
+      <label class="layui-form-label">显示名</label>
+      <div class="layui-input-block">
+        <input type="text" name="displayName" lay-verify="required" placeholder="请输入显示名" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">手机号码</label>
+      <div class="layui-input-block">
+        <input type="text" name="cellPhone" placeholder="请输入手机号码" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">邮箱</label>
+      <div class="layui-input-block">
+        <input type="text" name="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+	 <div class="layui-form-item">
+	  <label class="layui-form-label">角色</label>
+	  <div class="layui-input-block">
+	    <select name="adminuserRoleId">
+	      <option th:each="role:${model.roleList}" th:value="${role.id}" th:text="${role.roleName}"></option>
+	    </select>
+	  </div>
+	</div>
+	
+	<div class="layui-form-item">
+      <label class="layui-form-label">描述</label>
+      <div class="layui-input-block">
+        <textarea type="text" name="description" autocomplete="off" class="layui-textarea"></textarea>
+      </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+      <button class="layui-btn" lay-submit lay-filter="LAY-admin-user-add-submit" id="LAY-admin-user-add-submit">提交</button>
+    </div>
+  </div>
+
+  <script src="../../../layuiadmin/layui/layui.js"></script>  
+  <script>
+  layui.config({
+    base: '../../../layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form'], function(){
+    var $ = layui.$
+    ,form = layui.form ;
+  })
+  </script>
+</body>
+</html>
